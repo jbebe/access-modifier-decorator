@@ -1,4 +1,4 @@
-import inspect
+from inspect import currentframe
 
 def __accessmod_error():
     raise AttributeError(
@@ -12,14 +12,14 @@ def public(method):
 
 def private(method):
     def wrapper(*args, **kwargs):
-        caller_self = inspect.currentframe().f_back.f_locals.get("self")
+        caller_self = currentframe().f_back.f_locals.get("self")
         if caller_self is None:
-            # not called from class
             __accessmod_error()
+            return method(*args, **kwargs)
         caller_full_name = caller_self.__class__.__qualname__
         func_name = method.__name__
         func_full_name = method.__qualname__
-        caller_full_fn_name = "{0}.{1}".format(caller_full_name, func_name)
+        caller_full_fn_name = caller_full_name + '.' + func_name
         if func_full_name != caller_full_fn_name:
             __accessmod_error()
         return method(*args, **kwargs)
@@ -36,7 +36,7 @@ def protected(method):
                 if base.__bases__ != (object,):
                     find_class(class_str, base.__bases__)
             return False
-        caller_self = inspect.currentframe().f_back.f_locals.get("self")
+        caller_self = currentframe().f_back.f_locals.get("self")
         if caller_self is None:
             __accessmod_error()
         caller_type = caller_self.__class__
