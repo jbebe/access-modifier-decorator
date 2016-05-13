@@ -2,8 +2,7 @@ import inspect
 
 def __accessmod_error():
     raise AttributeError(
-        "Private attributes and methods are only " +
-        "accessible from the owner class."
+        "Private methods are only accessible from the owner class."
     )
 
 def public(method):
